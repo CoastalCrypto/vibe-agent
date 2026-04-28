@@ -32,7 +32,17 @@ const INITIAL = {
   error: null as string | null,
 }
 
-interface SessionStore extends typeof INITIAL {
+interface SessionState {
+  phase: Phase
+  prompt: string
+  questions: Question[]
+  filePlan: FileState[]
+  activeStream: ActiveStream | null
+  workspacePath: string | null
+  error: string | null
+}
+
+interface SessionStore extends SessionState {
   setPhase: (phase: Phase) => void
   setPrompt: (prompt: string) => void
   setQuestions: (questions: Question[]) => void
@@ -44,10 +54,10 @@ interface SessionStore extends typeof INITIAL {
   setWorkspacePath: (path: string) => void
   setError: (error: string) => void
   reset: () => void
-  getInitialState: () => typeof INITIAL
+  getInitialState: () => SessionState
 }
 
-export const useSessionStore = create<SessionStore>((set, get) => ({
+export const useSessionStore = create<SessionStore>((set) => ({
   ...INITIAL,
 
   setPhase: (phase) => set({ phase }),
