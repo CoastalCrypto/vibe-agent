@@ -10,10 +10,13 @@ function parseQuestions(raw: string): AgentQuestion[] {
   const cleaned = raw.replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '').trim()
   const parsed = JSON.parse(cleaned)
   if (!Array.isArray(parsed)) throw new Error('not an array')
-  return parsed.map((q) => ({
-    question: String(q.question),
-    options: Array.isArray(q.options) ? q.options.map(String) : [],
-  }))
+  return parsed.map((q) => {
+    if (!q.question || !Array.isArray(q.options)) throw new Error('invalid question shape')
+    return {
+      question: String(q.question),
+      options: q.options.map(String),
+    }
+  })
 }
 
 export async function runClarify(settings: Settings, prompt: string): Promise<AgentQuestion[]> {
@@ -32,7 +35,7 @@ export async function runClarify(settings: Settings, prompt: string): Promise<Ag
     try {
       return parseQuestions(lastRaw)
     } catch {
-      // retry on second attempt with stricter prompt
+      // retry: same prompt, LLM may self-correct on second attempt
     }
   }
 
