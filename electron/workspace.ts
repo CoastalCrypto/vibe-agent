@@ -29,7 +29,9 @@ export async function writeFile(workspacePath: string, filename: string, content
 }
 
 export function openInVSCode(workspacePath: string): void {
-  exec(`code "${workspacePath}"`)
+  exec(`code "${workspacePath}"`, (err) => {
+    if (err) throw new Error(`Failed to open VS Code: ${err.message}`)
+  })
 }
 
 export function openInExplorer(workspacePath: string): void {

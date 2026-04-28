@@ -27,13 +27,13 @@ export async function runAgentSession(win: BrowserWindow, payload: SubmitPayload
 
     for (const file of filePlan) {
       win.webContents.send('agent:file-start', { filename: file.filename, language: file.language })
-      let content = ''
+      const tokens: string[] = []
       try {
         await runStream(settings, prompt, answers, filePlan, file, (token) => {
-          content += token
+          tokens.push(token)
           win.webContents.send('agent:token', { token })
         })
-        await writeFile(workspacePath, file.filename, content)
+        await writeFile(workspacePath, file.filename, tokens.join(''))
         win.webContents.send('agent:file-complete', { filename: file.filename })
       } catch (err) {
         win.webContents.send('agent:file-error', { filename: file.filename, error: String(err) })
