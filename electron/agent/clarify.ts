@@ -1,5 +1,6 @@
 import type { Settings, AgentQuestion } from '../types'
 import { createClient } from './client'
+import { stripFences } from './utils'
 
 const SYSTEM_PROMPT = `You are a coding agent gathering requirements before writing code.
 Generate 3-5 clarifying questions with 2-4 option choices each.
@@ -7,7 +8,7 @@ Return ONLY a valid JSON array — no markdown fences, no explanation:
 [{"question": "...", "options": ["option1", "option2"]}]`
 
 function parseQuestions(raw: string): AgentQuestion[] {
-  const cleaned = raw.replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '').trim()
+  const cleaned = stripFences(raw)
   const parsed = JSON.parse(cleaned)
   if (!Array.isArray(parsed)) throw new Error('not an array')
   return parsed.map((q) => {

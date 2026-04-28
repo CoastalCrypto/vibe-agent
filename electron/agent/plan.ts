@@ -1,5 +1,6 @@
 import type { Settings, FilePlanEntry } from '../types'
 import { createClient } from './client'
+import { stripFences } from './utils'
 
 const SYSTEM_PROMPT = `You are a coding agent planning a project.
 Return a JSON array of files to create — ONLY JSON, no markdown, no explanation:
@@ -7,7 +8,7 @@ Return a JSON array of files to create — ONLY JSON, no markdown, no explanatio
 List files in dependency order. Always include README.md as the last file.`
 
 function parsePlan(raw: string): FilePlanEntry[] {
-  const cleaned = raw.replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '').trim()
+  const cleaned = stripFences(raw)
   const parsed = JSON.parse(cleaned)
   if (!Array.isArray(parsed)) throw new Error('not an array')
   return parsed.map((f) => {
