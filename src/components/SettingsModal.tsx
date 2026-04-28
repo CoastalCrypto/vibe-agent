@@ -31,9 +31,14 @@ export function SettingsModal({ open, onClose }: Props) {
 
   async function handleSave() {
     setSaving(true)
-    await window.electron.saveSettings(settings)
-    setSaving(false)
-    onClose()
+    try {
+      await window.electron.saveSettings(settings)
+      onClose()
+    } catch (err) {
+      console.error('Failed to save settings:', err)
+    } finally {
+      setSaving(false)
+    }
   }
 
   function update<K extends keyof Settings>(key: K, value: Settings[K]) {
@@ -56,7 +61,7 @@ export function SettingsModal({ open, onClose }: Props) {
                 value={String(settings[key])}
                 placeholder={placeholder}
                 type={key === 'apiKey' ? 'password' : 'text'}
-                onChange={(e) => update(key, e.target.value as any)}
+                onChange={(e) => update(key, e.target.value as string)}
               />
             </div>
           ))}
