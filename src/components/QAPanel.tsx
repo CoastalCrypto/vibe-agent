@@ -15,7 +15,7 @@ export function QAPanel() {
       <div className="text-indigo-400 text-[10px] uppercase tracking-widest mb-1">◆ Agent Questions</div>
 
       {questions.map((q, i) => (
-        <div key={i} className="bg-[#12121e] rounded-md p-3 border border-[#2a2a3e]">
+        <div key={q.question} className="bg-[#12121e] rounded-md p-3 border border-[#2a2a3e]">
           <div className="text-amber-400 text-[11px] mb-2">{q.question}</div>
           <div className="flex flex-wrap gap-2">
             {q.options.map((opt) => (
