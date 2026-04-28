@@ -1,11 +1,11 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 
 vi.mock('electron-store', () => {
-  const data: Record<string, unknown> = {}
   return {
     default: class {
-      get(key: string, def: unknown) { return data[key] ?? def }
-      set(key: string, val: unknown) { data[key] = val }
+      private data: Record<string, unknown> = {}
+      get(key: string, def: unknown) { return this.data[key] ?? def }
+      set(key: string, val: unknown) { this.data[key] = val }
     },
   }
 })
